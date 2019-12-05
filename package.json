@@ -1,0 +1,28 @@
+{
+  "name": "sweet_corner",
+  "version": "1.0.0",
+  "description": "Backend for the Sweet Corner e-comerce website",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Peterzhang123/m41019_sweet_corner.git"
+  },
+  "keywords": [],
+  "author": "Peter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Peterzhang123/m41019_sweet_corner/issues"
+  },
+  "homepage": "https://github.com/Peterzhang123/m41019_sweet_corner#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
+}
