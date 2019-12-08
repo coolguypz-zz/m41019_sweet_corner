@@ -29,7 +29,7 @@ export default props => {
           </p>
         </div>
         <div className="col-md-4 aside"></div>
-        <div className="col cupcakes"></div>
+        <div className="col cupcake"></div>
       </div>
     </div>
   );
