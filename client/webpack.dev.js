@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.common');
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 3000;
 
 module.exports = merge(common, {
     entry: [
