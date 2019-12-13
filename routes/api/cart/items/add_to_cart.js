@@ -4,11 +4,17 @@ const cartJwt = require('../../../../config/cart_jwt.json');
 
 module.exports = async (req, res) => {
 
-  const { product_id } = req.params
+  const { product_id } = req.params;
+  const { quantity = 1 } = req.body;   // default qty = 1 if no send anything
+  let { cart,token } = req;
 
-  let { cart } = req;
+  if(isNaN(quantity) || quantity < 1){
+    res.status(422).send({
+      message:"invalid quantity received"
+    })
+    return;
+  }
 
-  let token = null;
 
   //check if product_id is 
 
@@ -49,13 +55,37 @@ module.exports = async (req, res) => {
   //    If product already in cart , increase QTY
 
   if(cartItem){
+    await db.execute('update cartItems set quantity = quantity + ? where id = ?',[quantity,cartItem.id])
     // increase the quantity of the existing cartItem
   }else{
     const [itemsResult] = await db.execute(`
     insert into cartItems (pid,cartId,productId,quantity) values (UUID(),?,?,?)`,[cart.id,product.id,1])
   }
 
-  const message = `1 ${product.name} add to cart`
+  const [[item]] = await db.query(`
+  SELECT c.pid as cartId, ci.createdAt as added, p.cost as 'each',ci.pid as itemId, p.name as name,
+          p.pid as productId ,ci.quantity as quantity,
+          (p.cost * ci.quantity) as cost from
+          cartItems as ci
+          JOIN
+          cart as c on ci.cartId = c.id
+          JOIN
+          products as p on p.id = ci.productId
+          WHERE cartId =12 and p.id =6`);
+
+  
+  const [[thumbnail]] = await db.query(`select i.altText as altText,
+                        i.type as type, i.file as file from 
+                        images as i
+                        JOIN
+                        cartItems as ci
+                        JOIN
+                        cart as c on ci.cartId = c.id
+                        JOIN
+                        products as p on p.id = ci.productId
+                        WHERE cartId =12 and p.id =6`)
+
+  const message = `${quantity} ${product.name} add to cart`;
   /* 
     Check for existing cart
 
@@ -69,8 +99,22 @@ module.exports = async (req, res) => {
 
   */
 
+
   res.send({
+    cartId:item.cartId,
+    cartToken:token,
+    item:{...item,
+      thumbnail:{
+        altText:thumbnail.altText,
+        url:`${req.protocol}://localhost:/images/${thumbnail.type}/${thumbnail.file}`
+      },
+      total:item.cost
+    },
     message,
-    token
+    total:{
+      cost:item.cost,
+      items:item.quantity
+    }
   })
 }
+
