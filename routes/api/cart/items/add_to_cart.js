@@ -21,8 +21,6 @@ module.exports = async (req, res) => {
 
   const [[product = null]] = await db.execute(`select id,name from products where pid = ?`, [product_id])
 
-  console.log("product: ", product);
-
   if(!product){
     res.status(404).send({
       message:`Product not found!`
@@ -68,26 +66,24 @@ module.exports = async (req, res) => {
                       p.name as name,p.pid as productId ,ci.quantity as quantity,
                       (p.cost * ci.quantity) as cost,i.altText as altText,
                       i.type as type, i.file as file from 
-                      images as i on i.productId = p.id and i.type = "thumbnail"
-                      JOIN
                       cartItems as ci 
                       JOIN
                       cart as c on ci.cartId = c.id
                       JOIN
                       products as p on p.id = ci.productId
-                      WHERE cartId = ? and p.id = ?`,[cart.id,product.id])
+                      JOIN
+                      images as i on i.productId = p.id 
+                      WHERE cartId = ? and p.id = ? and i.type = "thumbnail"`,[cart.id,product.id])
 
   const {cartId,altText,file,type, ...item} = cartData;
    item.thumbnail={
                     altText,
-                    url:buildUrl(rep,type,file)
+                    url:buildUrl(req,type,file)
                   }            
 
   const message = `${quantity} ${product.name} add to cart`;
 
   const total = await getCartTotals(cart.id);
-
-  conost
 
   res.send({
     cartId,
