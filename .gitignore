@@ -5,9 +5,5 @@ node_modules
 .DS_Store
 
 config/*.js
-<<<<<<< HEAD
-config/*.json
-=======
-config/*.json
 
->>>>>>> 86bc4d8705d05b8729042a0fce2ffb705eb5d5a4
+config/*.json
