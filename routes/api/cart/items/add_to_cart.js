@@ -1,6 +1,7 @@
 const db = require('../../../../db/index');
 const jwt = require('jwt-simple');
 const cartJwt = require('../../../../config/cart_jwt.json');
+const {buildUrl} = require('../../../../helpers')
 
 module.exports = async (req, res) => {
 
@@ -63,15 +64,16 @@ module.exports = async (req, res) => {
   }
 
   const [[item]] = await db.query(`
-  SELECT c.pid as cartId, ci.createdAt as added, p.cost as 'each',ci.pid as itemId, p.name as name,
-          p.pid as productId ,ci.quantity as quantity,
-          (p.cost * ci.quantity) as cost from
-          cartItems as ci
-          JOIN
-          cart as c on ci.cartId = c.id
-          JOIN
-          products as p on p.id = ci.productId
-          WHERE cartId =12 and p.id =6`);
+                    SELECT c.pid as cartId, ci.createdAt as added, p.cost as 'each',ci.pid as itemId, 
+                    p.name as name,p.pid as productId ,ci.quantity as quantity,
+                            (p.cost * ci.quantity) as cost 
+                            from
+                            cartItems as ci
+                            JOIN
+                            cart as c on ci.cartId = c.id
+                            JOIN
+                            products as p on p.id = ci.productId
+                            WHERE cartId = ? and p.id = ?`,[cart.id,product.id])
 
   
   const [[thumbnail]] = await db.query(`select i.altText as altText,
@@ -83,7 +85,11 @@ module.exports = async (req, res) => {
                         cart as c on ci.cartId = c.id
                         JOIN
                         products as p on p.id = ci.productId
-                        WHERE cartId =12 and p.id =6`)
+                        WHERE cartId = ? and p.id = ?`,[cart.id,product.id])
+
+  const [total] = await db.query(`
+      SELECT ci.quantity FROM cart as c JOIN cartItems as ci WHERE c.id = ?
+  `,[cart.id])
 
   const message = `${quantity} ${product.name} add to cart`;
   /* 
@@ -106,14 +112,14 @@ module.exports = async (req, res) => {
     item:{...item,
       thumbnail:{
         altText:thumbnail.altText,
-        url:`${req.protocol}://localhost:/images/${thumbnail.type}/${thumbnail.file}`
+        url:buildUrl(req,thumbnail.type,thumbnail.file)
       },
       total:item.cost
     },
     message,
     total:{
       cost:item.cost,
-      items:item.quantity
+      items:total.length
     }
   })
 }
