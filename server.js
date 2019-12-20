@@ -4,6 +4,10 @@ const ApiError = require('./helpers/api_error')
 global.ApiError = ApiError;
 const defaultErrorHandler = require('./middleware/default_error_handler')
 const routes = require('./routes/index.js');
+const path = require("path");
+
+const app = express();
+
 const path = require('path');
 
 const app = express();
@@ -17,6 +21,11 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname,'client','dist')))
 
 app.use(routes);
+
+app.get('*',(req,res)=>{
+  res.sendFile(path.resolve(__dirname,'client','dist','index.html'))
+})
+
 
 app.get('*',(req,res) => {
   res.sendFile(path.resolve(__dirname,'client','dist','index.html'))
