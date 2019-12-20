@@ -44,10 +44,10 @@ export default (state = DEFAULT_STATE, action) => {
          };
 
       case types.ADD_QTY:
-         const selectItem = action.payload.item;
+         const selectItem = action.payload.output.item;
          return {
             ...state,
-            total: action.payload.total,
+            total: action.payload.output.total,
             ...state.items.filter(item => {
                if (item.itemId == selectItem.itemId) {
                   item.quantity = selectItem.quantity;
@@ -55,7 +55,7 @@ export default (state = DEFAULT_STATE, action) => {
                if (item.itemId == null) {
                   state.items.filter(id => id.itemId !== item.itemId);
                }
-            }),
+             }),
          };
       default:
          return state;

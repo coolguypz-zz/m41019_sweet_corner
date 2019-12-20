@@ -18,10 +18,7 @@ class guestOrderDetails extends Component {
   render() {
 
     if(!this.props.orderDetail) return <div className="center"><h1>Loading...</h1></div>
-    const {orderDetail} = this.props;
-
-    console.log('orderDetail',orderDetail)
-   
+    const {orderDetail} = this.props;   
     return (
       <div>
         <div className="center mb-4 mt-4">
