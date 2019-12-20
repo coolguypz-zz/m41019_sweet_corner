@@ -15,7 +15,7 @@ export default props => {
 
             <div className="modal-body">
                <div className="modal-title ml-3 row" id="productDetailsShow">
-                  <div className="col-md-12">
+                  {/* <div className="col-md-12">
                      <p>Caption : {props.caption}</p>
                      <p>Calories : {props.calories}</p>
                   </div>
@@ -30,7 +30,7 @@ export default props => {
                      <p>Carbs : {props.nutrition.carbs}</p>
                      <p>Fat : {props.nutrition.fat}</p>
                      <p>Sugar : {props.nutrition.sugar}</p>
-                  </div>
+                  </div> */}
                </div>
 
                <img

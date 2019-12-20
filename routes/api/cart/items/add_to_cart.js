@@ -1,27 +1,21 @@
-const db = require('../../../../db/index'); 
-
-module.exports = async (req,res) =>{
-
-  let {cart} = req;
-
-  if (!cart){
-    const [[cartStatus]] = await db.query(`select id from cartStatuses where mid = "active"`)
-
-    console.log("cartStatus: " , cartStatus);
-    const [result] = await db.query(`insert into cart (pid,statusId) values (UUID(),?)`,[cartStatus.id])
-    console.log("result: ", result);
-  }
-
 const db = require('../../../../db/index');
 const jwt = require('jwt-simple');
 const cartJwt = require('../../../../config/cart_jwt.json');
 const {buildUrl,getCartTotals} = require('../../../../helpers')
 
-module.exports = async (req, res) => {
+module.exports = async (req,res) =>{
+
+  let {cart,token} = req;
+
+  if (!cart){
+
+    const [[cartStatus]] = await db.query(`select id from cartStatuses where mid = "active"`)
+
+    const [result] = await db.query(`insert into cart (pid,statusId) values (UUID(),?)`,[cartStatus.id])
+  }
 
   const { product_id } = req.params;
   const { quantity = 1 } = req.body;   // default qty = 1 if no send anything
-  let { cart,token } = req;
 
   if(isNaN(quantity) || quantity < 1){
     res.status(422).send({
@@ -63,16 +57,21 @@ module.exports = async (req, res) => {
 
   //    Does item already exist in cart
 
-  const [[cartItem = null]] = await db.query(`select id from cartItems where cartId = ? and productId = ?`,[cart.id,product.id])
+  const [[cartItem = null]] = await db.query(`
+                select id from cartItems where cartId = ? and productId = ?`
+                ,[cart.id,product.id])
   
   //    If product already in cart , increase QTY
 
   if(cartItem){
-    await db.execute('update cartItems set quantity = quantity + ? where id = ?',[quantity,cartItem.id])
+    await db.execute(`
+    update cartItems set quantity = quantity + ? where id = ?`
+    ,[quantity,cartItem.id])
     // increase the quantity of the existing cartItem
   }else{
     const [itemsResult] = await db.execute(`
-    insert into cartItems (pid,cartId,productId,quantity) values (UUID(),?,?,?)`,[cart.id,product.id,1])
+    insert into cartItems (pid,cartId,productId,quantity) values (UUID(),?,?,?)`
+    ,[cart.id,product.id,quantity])
   }
 
   const [[cartData = null]] = await db.query(`
@@ -126,5 +125,4 @@ module.exports = async (req, res) => {
 
   */
 
-}
 

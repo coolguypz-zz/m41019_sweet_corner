@@ -58,7 +58,7 @@ class Cart extends Component {
                   </tr>
                </thead>
                <tbody>
-                  {cartItem.map(item => {
+                  {cartItem.map(item => {                     
                      return (
                         <tr key={item.itemId} id="containerRow" onClick={() => this.goBackToDetail(item.productId)}>
                            <th scope="row">
@@ -136,6 +136,7 @@ function mapStateToProps(state) {
       total: state.cart.total,
       user: state.user.user,
       logged: state.user.loggedIn,
+      item:state.cart.item
    };
 }
 
