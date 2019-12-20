@@ -1,7 +1,7 @@
 import types from "./type";
 import axios from "axios";
 
-// const BASE_URL = "http://api.sc.lfzprototypes.com";
+const BASE_URL = "http://api.sc.lfzprototypes.com";
 
 function tokenCheck() {
    const cartToken = localStorage.getItem("sc-cart-token");
@@ -106,6 +106,8 @@ export const createGuessOrder = guest => async dispatch => {
    try {
       const axiosConfig = tokenCheck();
 
+      console.log("Guest in createGuess Order: ", guest);
+
       const res = await axios.post(`/api/orders/guest`, guest, axiosConfig);
 
       localStorage.removeItem("sc-cart-token");
@@ -129,7 +131,12 @@ export const createGuessOrder = guest => async dispatch => {
 
 export const getGuestOrderDetails = (email, orderId) => async dispatch => {
    try {
-      const res = await axios.get(`/api/orders/guest/${orderId}?email=${email}`);
+      const res = await axios.get(`
+                        /api/orders/guest/${orderId}`,{
+                           params:{
+                              email
+                           }
+                        });
 
       dispatch({
          type: types.GET_GUEST_ORDER_DETAILS,
@@ -148,7 +155,7 @@ export const itemDelete = id => async dispatch => {
 
       dispatch({
          type: types.ITEM_DELETE,
-         data: res,
+         data: res.data,
       });
    } catch (error) {
       console.log("itemDelete has error", error);
@@ -158,18 +165,16 @@ export const itemDelete = id => async dispatch => {
 export const quantityChange = (id, quantity) => async dispatch => {
    try {
       const axiosConfig = tokenCheck();
-
-      const res = await axios.patch(
-         `/api/cart/items/${id}`,
+      const res = await axios.patch(`/api/cart/items/${id}`,
          {
             quantity: quantity,
          },
          axiosConfig,
       );
-
       dispatch({
          type: types.ADD_QTY,
          payload: res.data,
+
       });
    } catch (e) {
       console.log("quantityChange has e", e);

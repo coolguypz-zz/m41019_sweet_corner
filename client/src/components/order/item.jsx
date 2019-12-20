@@ -4,7 +4,6 @@ import './guest_order_details.scss'
 
 export default class item extends Component {
   render() {
-    console.log("this.props.item",this.props.item);
     const {item,itemCount,total} = this.props;    
     if(item == null) return false;
     return (
@@ -43,7 +42,6 @@ export default class item extends Component {
   </thead>
 </table> 
 </div>
-)
-  }
+)}
 }
 

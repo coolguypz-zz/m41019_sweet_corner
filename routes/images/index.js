@@ -8,8 +8,6 @@ router.get('/:type/:file',(req,res)=>{
 
   const {type,file} = req.params;
 
-  console.log("Type: ",type, "File: ",file);
-
   const imgPath = path.resolve(__dirname,type,file);
 
   if(fs.existsSync(imgPath)){
