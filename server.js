@@ -8,9 +8,6 @@ const path = require("path");
 
 const app = express();
 
-const path = require('path');
-
-const app = express();
 
 //check if req has body, change to quantity=5&my%20name=scott parse to object
 
@@ -23,11 +20,6 @@ app.use(express.static(path.resolve(__dirname,'client','dist')))
 app.use(routes);
 
 app.get('*',(req,res)=>{
-  res.sendFile(path.resolve(__dirname,'client','dist','index.html'))
-})
-
-
-app.get('*',(req,res) => {
   res.sendFile(path.resolve(__dirname,'client','dist','index.html'))
 })
 
